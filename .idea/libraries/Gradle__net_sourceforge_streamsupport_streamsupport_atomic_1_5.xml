@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: net.sourceforge.streamsupport:streamsupport-atomic:1.5">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.sourceforge.streamsupport/streamsupport-atomic/1.5/2afc86bd1cc2f3f562cf4f7a1fb80b7e0ad681d7/streamsupport-atomic-1.5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.sourceforge.streamsupport/streamsupport-atomic/1.5/de0c17bdf937ee3e84bed7afc0bf217432dc1e85/streamsupport-atomic-1.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

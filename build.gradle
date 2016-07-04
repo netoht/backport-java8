@@ -1,0 +1,74 @@
+apply plugin: 'java'
+apply plugin: 'me.tatarka.retrolambda'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'me.tatarka:gradle-retrolambda:3.2.5'
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.pack.Library'
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+processResources {
+    from('src/main/java') {
+        include '**/*.java'
+        def importSyntax = "import(\\s)+" // [^(\/\/|\/\*)]?(\s)*import(\s)+
+        def blockJava8Packages = ['java.util.xxxx','java.util.stream']
+        def messageError  = ''
+        def containsBlockPackages = { file ->
+            blockJava8Packages.each {
+                def syntax = "${importSyntax}${it}"
+                def r = file.text =~ (syntax)
+                if(r) messageError = """
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Erro ao compilar o projeto ${project.name}
+Motivo:          Classe importanto um pacote ilegal
+Pacote ilegal:   ${it}
+Classe com erro: ${file}
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"""
+            }
+
+        }
+        eachFile {
+//            println it
+//            if (!it.isDirectory() && containsBlockPackages(it.file) && !messageError.isEmpty()) {
+//                throw new GradleException(messageError)
+//            }
+        }
+    }
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.21'
+
+    compile 'net.sourceforge.streamsupport:streamsupport:1.5'
+    compile 'net.sourceforge.streamsupport:streamsupport-cfuture:1.5'
+    compile 'net.sourceforge.streamsupport:streamsupport-atomic:1.5'
+    compile 'net.sourceforge.streamsupport:streamsupport-flow:1.5'
+    compile 'net.sourceforge.streamsupport:streamsupport-literal:1.5'
+
+    testCompile 'junit:junit:4.12'
+}
+
+retrolambda {
+    jvmArgs '-noverify'
+    jdk '/Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home' //System.getenv("JAVA_HOME")
+    oldJdk '/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home' //System.getenv("JAVA6_HOME")
+    javaVersion JavaVersion.VERSION_1_6
+    //defaultMethods true
+}
